@@ -1,0 +1,265 @@
+﻿Build1=Default,b4a.example
+File1=basedatos.db
+File2=PantallaAlta.bal
+File3=PantallaEdicion.bal
+File4=PantallaPrincipal.bal
+FileGroup1=Default Group
+FileGroup2=Default Group
+FileGroup3=Default Group
+FileGroup4=Default Group
+Group=Default Group
+IconFile=
+Library1=core
+Library2=httputils2
+Library3=json
+Library4=sql
+Library5=stringutils
+Library6=reflection
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.DarkTheme)~\n~AddPermission("android.permission.WRITE_EXTERNAL_STORAGE")~\n~'End of default text.~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="19" />~\n~)
+Module1=Starter
+Module2=Edicion
+Module3=AltaProducto
+NumberOfFiles=4
+NumberOfLibraries=6
+NumberOfModules=3
+Version=9.3
+@EndOfDesignText@
+#Region  Project Attributes 
+	#ApplicationLabel: El Mundo de las Plantas
+	#VersionCode: 1
+	#VersionName: 1.1
+	'SupportedOrientations possible values: unspecified, landscape or portrait.
+	#SupportedOrientations: portrait
+	#CanInstallToExternalStorage: False
+#End Region
+
+#Region  Activity Attributes
+	#FullScreen: True
+	#IncludeTitle: True
+#End Region
+
+Sub Process_Globals
+	'These global variables will be declared once when the application starts.
+	'These variables can be accessed from all modules.
+	'Dim Tim As Timer
+	Dim idProducto As Int
+	Dim nombreProducto As String
+	Dim modeloProducto As String
+	Dim tipoProducto As String
+	Dim precioProducto As String
+	'Dim categoriaProducto As String
+	'Dim recargarPagina As Boolean}
+	Dim SQL1 As SQL
+End Sub
+
+Sub Globals
+	'Private btnBuscar As Button
+	Private txtBuscar As EditText
+	Private lvNombre As ListView
+	Dim webservice As HttpJob
+	Dim json As JSONParser
+	'Private RbPlantas As RadioButton
+	'Private RbMacetas As RadioButton
+	Dim registro As Cursor
+	Dim ColorFondo, ColorBusqueda, ColorLista As ColorDrawable
+	Dim EsDescargaExcel As Boolean
+	EsDescargaExcel = False
+End Sub
+
+Sub Activity_Create(FirstTime As Boolean)
+	Activity.LoadLayout("PantallaPrincipal")
+	webservice.Initialize("webservice", Me)
+	lvNombre.TwoLinesLayout.Label.TextSize = 10
+	lvNombre.TwoLinesLayout.ItemHeight = 80dip
+	lvNombre.TwoLinesLayout.Label.SetLayout(5dip,2dip,300dip,50dip)
+	lvNombre.TwoLinesLayout.SecondLabel.SetLayout(5dip,55dip,80dip,30dip)
+	lvNombre.TwoLinesLayout.Label.TextColor = Colors.Black
+	'lvNombre.TwoLinesLayout.SecondLabel.TextColor = Colors.Green
+	'Activity.AddMenuItem2("Menu 1","xMenu1",LoadBitmap(File.DirAssets, "home.png"))
+	Activity.AddMenuItem("Sincronizar Datos","xMenuSincronizarDatos")
+	Activity.AddMenuItem("Nuevo Producto","xMenuNuevoProducto")
+	Activity.AddMenuItem("Descargar DB","xMenuDescargarDB")
+	'BASE DE DATOS SQLITE
+	Dim ruta As String
+	'If File.ExternalWritable Then
+	'	ruta = File.DirDefaultExternal
+	'Else
+		ruta = File.DirInternal
+	'End If
+	If File.Exists(ruta,"basedatos.db")=False Then
+		File.Copy(File.DirAssets,"basedatos.db",ruta,"basedatos.db")
+	End If
+	SQL1.Initialize(ruta,"basedatos.db",True)
+	SetDivider(lvNombre, Colors.LightGray,15)
+	'txtBuscar.Color = Colors.Gray
+	'ColorBusqueda.Initialize(Colors.Gray, 5dip)
+	ColorBusqueda.Initialize2(Colors.RGB(248,248,255),2dip,2dip,Colors.RGB(80,80,80))
+	ColorLista.Initialize(Colors.RGB(248,248,255), 5dip)
+	ColorFondo.Initialize(Colors.RGB(248,248,255), 5dip)
+	txtBuscar.Background=ColorBusqueda
+	lvNombre.Background = ColorLista
+	Activity.Background = ColorFondo
+End Sub
+
+Sub SetDivider(lv As ListView, Color As Int, Height As Int)
+	Dim r As Reflector
+	r.Target = lv
+	Dim CD As ColorDrawable
+	CD.Initialize(Color, 0)
+	r.RunMethod4("setDivider", Array As Object(CD), Array As String("android.graphics.drawable.Drawable"))
+	r.RunMethod2("setDividerHeight", Height, "java.lang.int")
+End Sub
+
+Sub xMenuSincronizarDatos_Click
+	ProgressDialogShow("Descargando datos...")
+	'webservice.Download("http://192.168.0.10/EMDLP/consultarTodos.php")
+	webservice.Download("https://elmundodelasplantas.000webhostapp.com/consultarTodos.php")
+End Sub
+
+Sub xMenuNuevoProducto_click
+	StartActivity("AltaProducto")
+	Activity.Finish
+End Sub
+
+Sub xMenuDescargarDB_click
+	ProgressDialogShow("Generando archivo...")
+	'registro = SQL1.ExecQuery("SELECT * FROM usuarios")
+	EsDescargaExcel=True
+	webservice.Download("https://elmundodelasplantas.000webhostapp.com/consultarTodos.php")
+	
+	'Activity.Finish
+End Sub
+
+Sub Activity_Resume
+	
+End Sub
+
+Sub Activity_Pause (UserClosed As Boolean)
+
+End Sub
+
+Sub JobDone (Job As HttpJob)
+	Dim Map1 As Map
+	Dim MenuItems As List
+	Dim m As Map
+	Dim contieneJob As String
+	Dim registroExcel As String
+	Dim listaExcel As List
+	'Dim ruta As String
+	'Dim out As OutputStream
+	'Dim listaDir As List
+	If Job.Success = True Then
+		json.Initialize(Job.GetString)
+		contieneJob = Job.GetString
+		If contieneJob = "[]" Then
+			Msgbox ("no hay datos", "")
+		Else
+			If EsDescargaExcel Then	'ES DESCARGA DE DATOS PARA BAJADA EN EXCEL
+				'If File.IsDirectory("/data/user/","0") = True Then
+				'	Log("existe el directorio")
+				'End If
+				'Return
+				'ruta = "/Download"
+				'File.DirInternal
+				listaExcel.Initialize
+				Map1 = json.NextObject
+				MenuItems = Map1.Get("productos")
+				ToastMessageShow (File.DirDefaultExternal, True)
+				Log(File.DirDefaultExternal)
+				For i=0 To MenuItems.Size -1
+					m = MenuItems.Get(i)
+					registroExcel = m.Get("id") & ";" & m.Get("nombre") & ";" & m.Get("modelo") & ";" & m.Get("tipo") & ";" & m.Get("precio")
+					File.WriteString(File.DirRootExternal,"basedatos.csv",registroExcel)
+					'listaExcel.Add(m.Get("id") & ";" & m.Get("nombre") & ";" & m.Get("model") & ";" & m.Get("tipo") & ";" & m.Get("precio"))
+					'File.WriteList(File.DirDefaultExternal,"basedatos.csv",listaExcel)
+					'out = File.OpenOutput(File.DirInternal,"basedatos.csv",False)
+					'File.Copy(File.DirDefaultExternal,"basedatos.cvs","/Download","basedatos.cvs")
+					'out.Close
+				Next
+				EsDescargaExcel=False
+				ToastMessageShow("Descarga completa",False)
+				
+			Else 'ES DESCARGA DE DATOS PARA SINCRONIZAR CON SQLITE
+				SQL1.ExecNonQuery("DELETE FROM productos")
+				SQL1.ExecNonQuery("VACUUM")
+				Map1 = json.NextObject
+				MenuItems = Map1.Get("productos")
+				For i=0 To MenuItems.Size -1
+					m = MenuItems.Get(i)
+					SQL1.ExecNonQuery("INSERT INTO productos (id,nombre,modelo,tipo,precio,categoria) VALUES('" & m.Get("id") & "','" & m.Get("nombre") & "','" & m.Get("modelo") & "','" & m.Get("tipo") & "','" & m.Get("precio") & "','" & m.Get("categoria") & "')")
+				Next
+			End If
+		End If
+	Else
+		Msgbox ("error en el jobdone: " & Job.ErrorMessage,"EMDLP")
+	End If
+	ProgressDialogHide
+	'Tim.Enabled=False
+End Sub
+
+Sub lvNombre_ItemLongClick (Position As Int, Value As Object)
+	Dim item As Int
+	item = Value
+	Dim reg As Cursor
+	reg = SQL1.ExecQuery("select * from productos where id = '" & item & "'")
+	'ToastMessageShow (reg.RowCount,False)
+	reg.Position = 0
+	idProducto = reg.GetInt("id")
+	nombreProducto = reg.GetString("nombre")
+	modeloProducto = reg.GetString("modelo")
+	tipoProducto = reg.Getstring("tipo")
+	precioProducto = reg.Getstring("precio")
+	'categoriaProducto = reg.Getstring("categoria")
+	StartActivity("Edicion")
+	Activity.Finish
+End Sub
+
+Sub Activity_KeyPress (KeyCode As Int) As Boolean
+	Dim mensaje As Int
+	If KeyCode = KeyCodes.KEYCODE_BACK Then
+		mensaje = Msgbox2 ("¿Cerrar el programa?","","Si","","No",Null)
+		If mensaje = -1 Then
+			Activity.Finish
+		Else
+			Return True
+		End If
+	End If
+End Sub
+
+Sub txtBuscar_TextChanged (Old As String, New As String)
+	Dim Color1, Color2,Color3 As ColorDrawable
+	Dim TamanioLetra As Float
+	'Dim padding As Float
+	TamanioLetra=16
+	'padding = 20
+	lvNombre.Clear
+	Color1.Initialize(Colors.Red,5dip)
+	Color2.Initialize(Colors.Blue,5dip)
+	Color3.Initialize(Colors.Cyan, 5dip)
+	'registro = SQL1.ExecQuery("select * from productos where nombre like '%" & txtBuscar.Text & "%'")
+	registro = SQL1.ExecQuery("select * from (select * from productos where nombre like '%" & txtBuscar.Text & "%' UNION select * from productos where modelo like '%" & txtBuscar.Text & "%') order by nombre, modelo, tipo, precio asc")
+	lvNombre.TwoLinesLayout.Label.Gravity = Gravity.CENTER_VERTICAL
+	lvNombre.TwoLinesLayout.Label.TextSize = TamanioLetra
+	lvNombre.TwoLinesLayout.SecondLabel.TextSize=18
+	'lvNombre.TwoLinesLayout.Label.Height = letra + (2 * padding)
+	'lvNombre.TwoLinesLayout.SecondLabel.Height = letra + (2 * padding)
+	If registro.RowCount > 0 Then
+		For i = 0 To registro.RowCount - 1
+			registro.Position = i
+			'CARGO LOS DATOS EN LA LISTA
+			lvNombre.AddTwoLines2(registro.GetString("nombre") & " | " & registro.GetString("modelo") & " | " & registro.GetString("tipo"),registro.GetString("precio"),registro.GetInt("id"))
+			lvNombre.TwoLinesLayout.SecondLabel.TextColor=Colors.RGB(0,100,0)
+			'lvNombre.TwoLinesLayout.Label.Top = 0
+			'lvNombre.TwoLinesLayout.SecondLabel.Top = lvNombre.TwoLinesLayout.Label.Height
+			'lvNombre.SingleLineLayout.Label.Color = Colors.red 'RGB(0,100,0)
+			'lvNombre.TwoLinesLayout.Label.Color=Colors.Magenta
+			'lvNombre.TwoLinesLayout.SecondLabel.Color=Colors.Red
+			'If i=1 Then
+			'	lvNombre.TwoLinesLayout.Background = Color3
+			'Else
+			'	lvNombre.TwoLinesLayout.Background = Color2
+			'End If
+			'lvNombre.TwoLinesLayout.Background = ColorLista
+		Next
+	End If
+End Sub
