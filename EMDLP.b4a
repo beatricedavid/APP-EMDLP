@@ -99,6 +99,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	txtBuscar.Background=ColorBusqueda
 	lvNombre.Background = ColorLista
 	Activity.Background = ColorFondo
+	xMenuSincronizarDatos_Click
 End Sub
 
 Sub SetDivider(lv As ListView, Color As Int, Height As Int)
@@ -111,7 +112,8 @@ Sub SetDivider(lv As ListView, Color As Int, Height As Int)
 End Sub
 
 Sub xMenuSincronizarDatos_Click
-	ProgressDialogShow("Descargando datos...")
+	ProgressDialogShow("Descargando datos, por favor espere")
+	DoEvents
 	'webservice.Download("http://192.168.0.10/EMDLP/consultarTodos.php")
 	webservice.Download("https://elmundodelasplantas.000webhostapp.com/consultarTodos.php")
 End Sub
@@ -177,9 +179,10 @@ Sub JobDone (Job As HttpJob)
 					'out.Close
 				Next
 				EsDescargaExcel=False
-				ToastMessageShow("Descarga completa",False)
-				
 			Else 'ES DESCARGA DE DATOS PARA SINCRONIZAR CON SQLITE
+				'ToastMessageShow ("ENTRO A SINCRONIZAR",False)
+				'ProgressDialogHide
+				'ProgressDialogShow("Descargando datos, este es otro")
 				SQL1.ExecNonQuery("DELETE FROM productos")
 				SQL1.ExecNonQuery("VACUUM")
 				Map1 = json.NextObject
@@ -187,7 +190,9 @@ Sub JobDone (Job As HttpJob)
 				For i=0 To MenuItems.Size -1
 					m = MenuItems.Get(i)
 					SQL1.ExecNonQuery("INSERT INTO productos (id,nombre,modelo,tipo,precio,categoria) VALUES('" & m.Get("id") & "','" & m.Get("nombre") & "','" & m.Get("modelo") & "','" & m.Get("tipo") & "','" & m.Get("precio") & "','" & m.Get("categoria") & "')")
+					
 				Next
+				DoEvents
 			End If
 		End If
 	Else

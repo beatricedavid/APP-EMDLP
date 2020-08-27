@@ -462,7 +462,7 @@ RDebugUtils.currentLine=2228253;
 mostCurrent._main._sql1 /*anywheresoftware.b4a.sql.SQL*/ .ExecNonQuery("INSERT INTO productos (id, nombre, modelo, tipo, precio, categoria) VALUES ("+BA.NumberToString(_maxid)+", '"+mostCurrent._etnombre.getText()+"','"+mostCurrent._etmodelo.getText()+"','"+mostCurrent._ettipo.getText()+"','"+mostCurrent._etprecio.getText()+"','otros')");
 RDebugUtils.currentLine=2228256;
  //BA.debugLineNum = 2228256;BA.debugLine="Log(\"https://elmundodelasplantas.000webhostapp.c";
-anywheresoftware.b4a.keywords.Common.LogImpl("02228256","https://elmundodelasplantas.000webhostapp.com/insertar.php?id="+BA.NumberToString(_maxid)+"&nombre="+_nombresinespacio+"&modelo="+_modelosinespacio+"&tipo="+_tiposinespacio+"&precio="+_preciosinespacio+"&categoria="+_valotros,0);
+anywheresoftware.b4a.keywords.Common.LogImpl("72228256","https://elmundodelasplantas.000webhostapp.com/insertar.php?id="+BA.NumberToString(_maxid)+"&nombre="+_nombresinespacio+"&modelo="+_modelosinespacio+"&tipo="+_tiposinespacio+"&precio="+_preciosinespacio+"&categoria="+_valotros,0);
 RDebugUtils.currentLine=2228259;
  //BA.debugLineNum = 2228259;BA.debugLine="webservice3.Download(\"https://elmundodelasplanta";
 mostCurrent._webservice3._download("https://elmundodelasplantas.000webhostapp.com/insertar.php?id="+BA.NumberToString(_maxid)+"&nombre="+_nombresinespacio+"&modelo="+_modelosinespacio+"&tipo="+_tiposinespacio+"&precio="+_preciosinespacio+"&categoria="+_valotros);

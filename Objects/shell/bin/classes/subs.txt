@@ -2,23 +2,27 @@ b4a.example
 0
 0
 0
-main,activity_create,1,1,43,76
+main,activity_create,1,0,43,77
 ,lvnombre,,txtbuscar,,webservice,,sql1,,colorbusqueda,,colorlista,,colorfondo
 ,lvnombre,,txtbuscar
-,setdivider
-main,setdivider,0,0,78,85
+,setdivider,,xmenusincronizardatos_click
+main,setdivider,0,0,79,86
 
 
 
-main,activity_keypress,1,0,191,201
+main,xmenusincronizardatos_click,1,1,88,93
+,webservice
+
+
+main,activity_keypress,1,0,196,206
 
 
 
-main,activity_pause,0,0,111,113
+main,activity_pause,0,0,113,115
 
 
 
-main,activity_resume,0,0,107,109
+main,activity_resume,0,0,109,111
 
 
 
@@ -26,11 +30,11 @@ main,globals,0,1,29,41
 ,esdescargaexcel
 ,esdescargaexcel
 
-main,jobdone,1,0,115,172
+main,jobdone,1,1,117,177
 ,json,,esdescargaexcel,,sql1
 ,esdescargaexcel
 
-main,lvnombre_itemlongclick,0,0,174,189
+main,lvnombre_itemlongclick,0,0,179,194
 ,sql1,,idproducto,,nombreproducto,,modeloproducto,,tipoproducto,,precioproducto
 ,idproducto,,nombreproducto,,modeloproducto,,tipoproducto,,precioproducto
 
@@ -38,20 +42,16 @@ main,process_globals,0,1,15,27
 
 
 
-main,txtbuscar_textchanged,0,0,203,239
+main,txtbuscar_textchanged,0,0,208,244
 ,lvnombre,,registro,,sql1,,txtbuscar
 ,registro
 
-main,xmenudescargardb_click,0,0,98,105
+main,xmenudescargardb_click,0,0,100,107
 ,esdescargaexcel,,webservice
 ,esdescargaexcel
 
-main,xmenunuevoproducto_click,0,0,93,96
+main,xmenunuevoproducto_click,0,0,95,98
 
-
-
-main,xmenusincronizardatos_click,0,0,87,91
-,webservice
 
 
 starter,application_error,0,0,27,29

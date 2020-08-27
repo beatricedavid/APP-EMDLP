@@ -3,7 +3,7 @@ package b4a.example;
 import anywheresoftware.b4a.BA;
 import anywheresoftware.b4a.pc.*;
 
-public class main_subs_0 {
+public class main_subs_1 {
 
 
 public static RemoteObject  _activity_create(RemoteObject _firsttime) throws Exception{
@@ -308,6 +308,9 @@ main._sql1.runVoidMethod ("ExecNonQuery",(Object)(RemoteObject.concat(RemoteObje
  }
 }Debug.locals.put("i", _i);
 ;
+ BA.debugLineNum = 169;BA.debugLine="DoEvents";
+Debug.ShouldStop(256);
+main.mostCurrent.__c.runVoidMethodAndSync ("DoEvents");
  };
  };
  }else {
