@@ -71,8 +71,9 @@ Sub Activity_Create(FirstTime As Boolean)
 	webservice.Initialize("webservice", Me)
 	lvNombre.TwoLinesLayout.Label.TextSize = 10
 	lvNombre.TwoLinesLayout.ItemHeight = 80dip
-	lvNombre.TwoLinesLayout.Label.SetLayout(5dip,2dip,300dip,50dip)
-	lvNombre.TwoLinesLayout.SecondLabel.SetLayout(5dip,55dip,80dip,30dip)
+	'lvNombre.Width=500
+	lvNombre.TwoLinesLayout.Label.SetLayout(5dip,2dip,370dip,50dip)
+	lvNombre.TwoLinesLayout.SecondLabel.SetLayout(5dip,55dip,150dip,30dip)
 	lvNombre.TwoLinesLayout.Label.TextColor = Colors.Black
 	'lvNombre.TwoLinesLayout.SecondLabel.TextColor = Colors.Green
 	'Activity.AddMenuItem2("Menu 1","xMenu1",LoadBitmap(File.DirAssets, "home.png"))
@@ -95,6 +96,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	'ColorBusqueda.Initialize(Colors.Gray, 5dip)
 	ColorBusqueda.Initialize2(Colors.RGB(248,248,255),2dip,2dip,Colors.RGB(80,80,80))
 	ColorLista.Initialize(Colors.RGB(248,248,255), 5dip)
+	'ColorLista.Initialize(Colors.Green,5dip)
 	ColorFondo.Initialize(Colors.RGB(248,248,255), 5dip)
 	txtBuscar.Background=ColorBusqueda
 	lvNombre.Background = ColorLista
@@ -113,7 +115,8 @@ End Sub
 
 Sub xMenuSincronizarDatos_Click
 	ProgressDialogShow("Descargando datos, por favor espere")
-	DoEvents
+	'DoEvents
+	'Sleep(0)
 	'webservice.Download("http://192.168.0.10/EMDLP/consultarTodos.php")
 	webservice.Download("https://elmundodelasplantas.000webhostapp.com/consultarTodos.php")
 End Sub
@@ -188,17 +191,18 @@ Sub JobDone (Job As HttpJob)
 				Map1 = json.NextObject
 				MenuItems = Map1.Get("productos")
 				For i=0 To MenuItems.Size -1
+					'DoEvents
+					'Sleep(0)
 					m = MenuItems.Get(i)
 					SQL1.ExecNonQuery("INSERT INTO productos (id,nombre,modelo,tipo,precio,categoria) VALUES('" & m.Get("id") & "','" & m.Get("nombre") & "','" & m.Get("modelo") & "','" & m.Get("tipo") & "','" & m.Get("precio") & "','" & m.Get("categoria") & "')")
-					
 				Next
-				DoEvents
 			End If
 		End If
 	Else
 		Msgbox ("error en el jobdone: " & Job.ErrorMessage,"EMDLP")
 	End If
 	ProgressDialogHide
+	ToastMessageShow ("Descarga finalizada", False)
 	'Tim.Enabled=False
 End Sub
 
@@ -245,7 +249,8 @@ Sub txtBuscar_TextChanged (Old As String, New As String)
 	registro = SQL1.ExecQuery("select * from (select * from productos where nombre like '%" & txtBuscar.Text & "%' UNION select * from productos where modelo like '%" & txtBuscar.Text & "%') order by nombre, modelo, tipo, precio asc")
 	lvNombre.TwoLinesLayout.Label.Gravity = Gravity.CENTER_VERTICAL
 	lvNombre.TwoLinesLayout.Label.TextSize = TamanioLetra
-	lvNombre.TwoLinesLayout.SecondLabel.TextSize=18
+	lvNombre.TwoLinesLayout.SecondLabel.TextSize=20
+	lvNombre.TwoLinesLayout.SecondLabel.TextColor=Colors.RGB(0,0,255)
 	'lvNombre.TwoLinesLayout.Label.Height = letra + (2 * padding)
 	'lvNombre.TwoLinesLayout.SecondLabel.Height = letra + (2 * padding)
 	If registro.RowCount > 0 Then
@@ -253,7 +258,6 @@ Sub txtBuscar_TextChanged (Old As String, New As String)
 			registro.Position = i
 			'CARGO LOS DATOS EN LA LISTA
 			lvNombre.AddTwoLines2(registro.GetString("nombre") & " | " & registro.GetString("modelo") & " | " & registro.GetString("tipo"),registro.GetString("precio"),registro.GetInt("id"))
-			lvNombre.TwoLinesLayout.SecondLabel.TextColor=Colors.RGB(0,100,0)
 			'lvNombre.TwoLinesLayout.Label.Top = 0
 			'lvNombre.TwoLinesLayout.SecondLabel.Top = lvNombre.TwoLinesLayout.Label.Height
 			'lvNombre.SingleLineLayout.Label.Color = Colors.red 'RGB(0,100,0)

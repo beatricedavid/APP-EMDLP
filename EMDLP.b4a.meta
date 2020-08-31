@@ -10,6 +10,6 @@ ModuleClosedNodes0=
 ModuleClosedNodes1=1
 ModuleClosedNodes2=
 ModuleClosedNodes3=
-NavigationStack=Main,txtBuscar_TextChanged,225,6,Main,Globals,40,0,Diseñador Visual,PantallaPrincipal.bal,-100,6,Main,Process_Globals,18,0,Main,Activity_Create,68,4,Main,SetDivider,86,0,Main,xMenuDescargarDB_click,99,0,Main,xMenuSincronizarDatos_Click,89,3,Main,xMenuNuevoProducto_click,98,0,Main,JobDone,168,6
+NavigationStack=Main,xMenuDescargarDB_click,99,0,Main,xMenuNuevoProducto_click,98,0,Main,Process_Globals,16,0,Main,txtBuscar_TextChanged,222,6,Diseñador Visual,PantallaPrincipal.bal,-100,6,Main,SetDivider,86,0,Main,Activity_Create,50,6,Main,xMenuSincronizarDatos_Click,93,4,Main,Activity_Pause,116,0,Main,JobDone,176,6
 SelectedBuild=0
 VisibleModules=1,2,3
